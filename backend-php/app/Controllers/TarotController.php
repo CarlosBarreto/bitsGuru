@@ -134,5 +134,96 @@ class TarotController {
             'prompt' => $prompt
         ]);
     }
+
+    /**
+     * Endpoint /api/tarot/createImage
+     * Recibe una pregunta y cartas, consulta a Gemini y devuelve una imagen en base64.
+     */
+    public function createImage() {
+        header('Content-Type: application/json');
+
+        $json_data = file_get_contents('php://input');
+        $data = json_decode($json_data, true);
+
+        if (!isset($data['pregunta']) || !isset($data['cartas'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Faltan los parámetros "pregunta" y "cartas"']);
+            return;
+        }
+
+        $preguntaUsuario = $data['pregunta'];
+        
+        // Extraer solo los nombres de las cartas para el prompt
+        $nombresDeCartas = array_map(function($carta) {
+            return $carta['nombre'] ?? '';
+        }, $data['cartas']);
+        $cartasSeleccionadas = implode(', ', $nombresDeCartas);
+
+        //$apiKey = getenv('GEMINI_API_KEY');
+        $apiKey= 'AIzaSyBdwcFGWMGMo2xsOI5v_xH3ytudL95nrzY'; // --- IGNORE ---
+        if (!$apiKey) {
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'El Gurú medita en el silencio cósmico... (Configura la GEMINI_API_KEY para obtener una respuesta real).'
+            ]);
+            return;
+        }
+
+        $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=" . $apiKey;
+
+        $prompt = "Una imagen de estilo ciber-místico que represente la pregunta '{$preguntaUsuario}' y las cartas del tarot: {$cartasSeleccionadas}.";
+
+        $payload = [
+            'contents' => [
+                [
+                    'parts' => [
+                        ['text' => $prompt]
+                    ]
+                ]
+            ],
+            'generationConfig' => [
+                'responseMimeType' => 'application/json',
+                'responseModalities' => ['IMAGE']
+            ]
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpcode != 200) {
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Error al contactar al oráculo cósmico para generar la imagen.',
+                'details' => json_decode($response)
+            ]);
+            return;
+        }
+
+        $result = json_decode($response, true);
+        
+        // La respuesta de la API con responseModalities: ['IMAGE'] puede ser diferente.
+        // Necesitamos inspeccionar la estructura de $result para encontrar la imagen.
+        // Basado en la documentación (hipotética), podría estar en algo como:
+        $imageBase64 = $result['candidates'][0]['content']['parts'][0]['fileData']['data'] ?? '';
+
+        if (empty($imageBase64)) {
+             // Fallback o manejo de error si no se encuentra la imagen
+            $imageBase64 = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
+        }
+
+
+        echo json_encode([
+            'image' => $imageBase64,
+            'raw_response' => $result // Opcional: para depuración
+        ]);
+    }
 }
        
