@@ -45,6 +45,11 @@ switch ($route) {
             $controller->pregunta();
         }
         break;
+    case 'tarot/createImage':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->createImage();
+        }
+        break;
     default:
         header("HTTP/1.0 404 Not Found");
         echo json_encode(['error' => 'Endpoint no encontrado']);
