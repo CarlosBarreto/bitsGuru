@@ -1,0 +1,9 @@
+# Activa el motor de reescritura de Apache
+RewriteEngine On
+
+# Evita que la regla se aplique a archivos o directorios existentes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirige todas las demás peticiones a index.php
+RewriteRule ^ index.php [QSA,L]

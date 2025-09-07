@@ -1,0 +1,11 @@
+# Ignorar dependencias del frontend
+frontend-astro/node_modules/
+frontend-astro/dist/
+
+# Ignorar dependencias y archivos sensibles del backend
+backend-php/vendor/
+backend-php/.env
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
