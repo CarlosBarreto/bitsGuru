@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Bienvenido al Gurú de Bits">
+	<main class="container">
+		<h1>El Gurú de Bits</h1>
+		<p class="tagline">Un oráculo digital para la era de la información.</p>
+		<a href="/oraculo" class="cta-button">Consultar el Oráculo</a>
+        <a href="/sobre" class="secondary-link">¿Qué es esto?</a>
+	</main>
+</Layout>
+
+<style>
+	main {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		min-height: 80vh;
+	}
+	h1 {
+		font-size: 3rem;
+		font-weight: 700;
+		color: #c084fc; /* Morado claro */
+        margin-bottom: 0.5rem;
+	}
+    .tagline {
+        color: #a7a7a7;
+        margin-bottom: 2rem;
+        font-style: italic;
+    }
+    .cta-button {
+        background-color: #9333ea; /* Morado */
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+    .cta-button:hover {
+        background-color: #a855f7; /* Morado más claro */
+    }
+    .secondary-link {
+        margin-top: 1rem;
+        color: #a7a7a7;
+        text-decoration: none;
+    }
+    .secondary-link:hover {
+        color: #c084fc;
+    }
+</style>
