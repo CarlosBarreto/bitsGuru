@@ -225,5 +225,81 @@ class TarotController {
             'raw_response' => $result // Opcional: para depuración
         ]);
     }
+
+    /**
+     * Endpoint /api/tarot/reading
+     * Recibe una pregunta y cartas, consulta a Gemini y devuelve una lectura de tarot.
+     */
+    public function reading() {
+        header('Content-Type: application/json');
+
+        $json_data = file_get_contents('php://input');
+        $data = json_decode($json_data, true);
+
+        if (!isset($data['pregunta']) || !isset($data['cartas'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Faltan los parámetros "pregunta" y "cartas"']);
+            return;
+        }
+
+        $preguntaUsuario = $data['pregunta'];
+        
+        // Extraer solo los nombres de las cartas para el prompt
+        $nombresDeCartas = array_map(function($carta) {
+            return $carta['nombre'] ?? '';
+        }, $data['cartas']);
+        $cartasSeleccionadas = implode(', ', $nombresDeCartas);
+
+        //$apiKey = getenv('GEMINI_API_KEY');
+        $apiKey= 'AIzaSyBdwcFGWMGMo2xsOI5v_xH3ytudL95nrzY'; // --- IGNORE ---
+        if (!$apiKey) {
+            http_response_code(500);
+            echo json_encode([
+                'respuesta' => 'El Gurú medita en el silencio cósmico... (Configura la GEMINI_API_KEY para obtener una respuesta real).',
+            ]);
+            return;
+        }
+
+        $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=" . $apiKey;
+
+        $prompt = "Eres un experto tarotista. El usuario pregunta: '{$preguntaUsuario}'. Las cartas seleccionadas son: {$cartasSeleccionadas}. Realiza una lectura de tarot completa y profunda, explicando el significado de cada carta en el contexto de la pregunta y cómo se relacionan entre sí. Ofrece consejos y una conclusión final.";
+
+        $payload = [
+            'contents' => [
+                [
+                    'parts' => [
+                        ['text' => $prompt]
+                    ]
+                ]
+            ]
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpcode != 200) {
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Error al contactar al oráculo cósmico.',
+                'details' => json_decode($response)
+            ]);
+            return;
+        }
+
+        $result = json_decode($response, true);
+        $respuestaGuru = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'El cosmos digital guarda silencio por ahora...';
+
+        echo json_encode([
+            'respuesta' => $respuestaGuru,
+        ]);
+    }
 }
        
