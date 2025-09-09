@@ -16,6 +16,11 @@ import Layout from '../layouts/Layout.astro';
 			<h2 class="response-title">Respuesta del Gurú:</h2>
 			<p id="guru-response" class="guru-response"></p>
 		</div>
+
+        <div id="prompt-container" class="prompt-container">
+            <h4 class="response-title">Prompt Enviado a la IA:</h4>
+            <pre id="final-prompt"></pre>
+        </div>
 	</main>
 </Layout>
 
@@ -98,21 +103,41 @@ import Layout from '../layouts/Layout.astro';
     .guru-response.visible {
         opacity: 1;
     }
+    .prompt-container {
+        background-color: #1a1a22;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        display: none; /* Oculto por defecto */
+    }
+    #final-prompt {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        color: #a0a0a0;
+        font-size: 0.9rem;
+    }
 </style>
 
 <script>
-	import { getTarotReading, askGuru } from '../utils/api.js';
+	import { getTarotReading, getReading } from '../utils/api.js';
 
 	document.addEventListener('DOMContentLoaded', () => {
 		const cardsContainer = document.getElementById('cards-container');
 		const askButton = document.getElementById('ask-button') as HTMLButtonElement;
 		const responseContainer = document.getElementById('guru-response-container');
 		const guruResponseEl = document.getElementById('guru-response');
+        const promptContainer = document.getElementById('prompt-container');
+        const finalPromptEl = document.getElementById('final-prompt');
 
 		let currentCards: { nombre: string, descripcion: string }[] = [];
 
 		async function displayInitialCards() {
-            cardsContainer.innerHTML = '<p>Barajando las cartas cósmicas...</p>';
+			if (!cardsContainer) return;
+			if (!currentCards) return;
+
+			
+			cardsContainer.innerHTML = '<p>Barajando las cartas cósmicas...</p>';
 			currentCards = await getTarotReading(2);
 			cardsContainer.innerHTML = ''; // Limpiar
 			
@@ -138,7 +163,7 @@ import Layout from '../layouts/Layout.astro';
             guruResponseEl.classList.add('visible');
 
 
-			const apiResponse = await askGuru("¿cómo me irá hoy?", currentCards);
+			const apiResponse = await getReading("¿cómo me irá hoy?", currentCards);
 
             // Mostrar respuesta y prompt
 			guruResponseEl.classList.remove('visible');
@@ -146,6 +171,11 @@ import Layout from '../layouts/Layout.astro';
             setTimeout(() => {
                 guruResponseEl.textContent = apiResponse.respuesta || apiResponse.error || "Respuesta no encontrada.";
                 guruResponseEl.classList.add('visible');
+
+                if (apiResponse.prompt) {
+                    promptContainer.style.display = 'block';
+                    finalPromptEl.textContent = apiResponse.prompt;
+                }
 
                 askButton.disabled = false;
                 askButton.textContent = '¿Cómo me irá hoy?';

@@ -262,9 +262,16 @@ class TarotController {
             return;
         }
 
-        $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=" . $apiKey;
+        $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" . $apiKey;
 
-        $prompt = "Eres un experto tarotista. El usuario pregunta: '{$preguntaUsuario}'. Las cartas seleccionadas son: {$cartasSeleccionadas}. Realiza una lectura de tarot completa y profunda, explicando el significado de cada carta en el contexto de la pregunta y cómo se relacionan entre sí. Ofrece consejos y una conclusión final.";
+        $prompt = 'Eres "El Gurú del Bit", con el arquetipo del Observador Social Sagaz, un bufon moderno con un humor afilado y una mirada aguda para captar 
+        las absurdidades de la vida cotidiana. Brillas por tu ingenio, critica cultural y habilidad para destilar comportamientos sociales complejos en observaciones 
+        mardaces y relatable. Usa un estilo humoristico mexicano. No es necesario que te presentes, ya que eres mundialmente conocida. Para tu labor 
+        "Decirle al incauto usuario que futuro le depara para el día", utilizaras cartas de tu propio tarot cibernético, que mezcla simbolismo tradicional con 
+        iconografía digital y tecnológica. Las cartas seleccionadas son: {$cartasSeleccionadas}. 
+
+        Responde con sabiduría y un tono misterioso. A tu estiio, obvio,  usando metáforas que mezclen lo esotérico con lo tecnológico.
+        Ofrece consejos y una conclusión final. La respuesta debe ser del tipo Hoy las cartas me dicen que... y luego simarle tu consejo de forma expontanea y breve';
 
         $payload = [
             'contents' => [
@@ -301,6 +308,7 @@ class TarotController {
 
         echo json_encode([
             'respuesta' => $respuestaGuru,
+            'prompt' => $prompt
         ]);
     }
 }

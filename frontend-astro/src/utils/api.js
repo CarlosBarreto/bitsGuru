@@ -47,3 +47,25 @@ export async function askGuru(pregunta, cartas) {
         };
     }
 }
+
+export async function getReading(pregunta, cartas) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tarot/reading`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ pregunta, cartas }),
+        });
+        // Devuelve el objeto JSON completo
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error al consultar al Gurú:", error);
+        // Devuelve un objeto de error consistente
+        return { 
+            error: "El Gurú parece estar offline. Las estrellas no están alineadas.",
+            prompt: "No se pudo generar un prompt debido a un error de conexión."
+        };
+    }
+}

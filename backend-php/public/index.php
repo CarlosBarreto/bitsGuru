@@ -51,7 +51,7 @@ switch ($route) {
         }
         break;
     case 'tarot/reading':
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $controller->reading();
         }
         break;
