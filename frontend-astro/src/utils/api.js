@@ -5,9 +5,9 @@ const API_BASE_URL = 'http://localhost:8080/guru-api'; // Asume que PHP corre en
  * Obtiene una tirada de 3 cartas del tarot.
  * @returns {Promise<string[]>} Un arreglo con los nombres de las cartas.
  */
-export async function getTarotReading() {
+export async function getTarotReading(count = 3) {
     try {
-        const response = await fetch(`${API_BASE_URL}/tarot/tirada`);
+        const response = await fetch(`${API_BASE_URL}/tarot/tirada?count=${count}`);
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }

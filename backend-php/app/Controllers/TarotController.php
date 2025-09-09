@@ -9,6 +9,8 @@ class TarotController {
     public function tirada() {
         header('Content-Type: application/json');
         
+        $count = isset($_GET['count']) ? (int)$_GET['count'] : 3;
+
         $cartasCiberneticas = [
             ["nombre" => "0 - El Bit", "descripcion" => "Representa el inicio, el potencial sin forma, la oportunidad. En su versión invertida, simboliza un fallo, un error en el código, un comienzo corrupto."],
             ["nombre" => "I - El Mago Cibernético", "descripcion" => "Representa el poder de la creación, la habilidad de manifestar ideas. Invertido, es una señal de manipulación o un bug en el sistema."],
@@ -35,7 +37,7 @@ class TarotController {
         ];
 
         shuffle($cartasCiberneticas);
-        $tirada = array_slice($cartasCiberneticas, 0, 3);
+        $tirada = array_slice($cartasCiberneticas, 0, $count);
 
         echo json_encode($tirada);
     }
