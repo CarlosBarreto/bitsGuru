@@ -93,7 +93,7 @@ class TarotController {
         No es necesario que te presentes, ya que eres mundialmente conocida. Utilizaras cartas de tu propio tarot cibernético, que mezcla simbolismo tradicional con 
         iconografía digital y tecnológica para responder la pregunta del usuario.
 
-                    Nuestro Usuario: 'Omar Fabian, 42 años, casado, dos hijos'.
+                    Nuestro Usuario: 'Mariana Medina, 33 Años, Soltera'.
                     La pregunta del usuario es: '{$preguntaUsuario}'.
                     Las cartas de tarot digital en su tirada son: {$cartasSeleccionadas}.
 
