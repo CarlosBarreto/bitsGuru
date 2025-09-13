@@ -55,6 +55,16 @@ switch ($route) {
             $controller->reading();
         }
         break;
+    case 'guru/wisdom-tweet':
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $controller->wisdomTweet();
+        }
+        break;
+    case 'guru/fan-response':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->fanResponse();
+        }
+        break;
     default:
         header("HTTP/1.0 404 Not Found");
         echo json_encode(['error' => 'Endpoint no encontrado']);

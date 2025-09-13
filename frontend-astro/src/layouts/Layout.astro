@@ -17,10 +17,13 @@ const { title } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-        <!-- Fuentes de Google: Cinzel para títulos (evoca inscripciones) y Lato para cuerpo -->
+        <!-- Fuentes de Google: Space Grotesk y Noto Sans para el diseño futurista -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 	</head>
 	<body>
 		<slot />
@@ -35,20 +38,48 @@ const { title } = Astro.props;
 		--color-accent: #5aa897; /* Jade o turquesa */
         --color-accent-hover: #7acbb7;
 
-		--font-heading: 'Cinzel', serif;
-		--font-body: 'Lato', sans-serif;
+		--font-heading: 'Space Grotesk', sans-serif;
+		--font-body: 'Noto Sans', sans-serif;
+
+        /* Estilos del diseño futurista */
+        --neon-glow: 0 0 5px #1349ec, 0 0 10px #1349ec, 0 0 20px #1349ec, 0 0 40px #1349ec, 0 0 80px #1349ec;
 	}
 
 	html {
 		font-family: var(--font-body);
-		background-color: var(--color-background);
-        color: var(--color-text);
+		background-color: #0c0a14;
+	       color: #e2e8f0; /* gray-200 */
 	}
 
-    body {
-        margin: 0;
-        padding: 2rem;
-    }
+	   body {
+	       margin: 0;
+	       padding: 0;
+	       font-family: var(--font-body);
+	   }
+
+	   /* Estilos personalizados del diseño */
+	   .card-glow {
+	       box-shadow: 0 0 5px rgba(19, 73, 236, 0.5), 0 0 10px rgba(19, 73, 236, 0.5), 0 0 20px rgba(19, 73, 236, 0.5);
+	       transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+	   }
+	   .card-glow:hover {
+	       transform: translateY(-10px);
+	       box-shadow: var(--neon-glow);
+	   }
+	   .glitch {
+	       animation: glitch 1s linear infinite;
+	   }
+	   @keyframes glitch {
+	       2%, 64% {
+	           transform: translate(2px, 0) skew(0deg);
+	       }
+	       4%, 60% {
+	           transform: translate(-2px, 0) skew(0deg);
+	       }
+	       62% {
+	           transform: translate(0, 0) skew(5deg);
+	       }
+	   }
 
 	h1, h2, h3, h4, h5, h6 {
 		font-family: var(--font-heading);

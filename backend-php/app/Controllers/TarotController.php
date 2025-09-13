@@ -313,5 +313,152 @@ class TarotController {
             'prompt' => $prompt
         ]);
     }
+
+    /**
+     * Endpoint /api/guru/wisdom-tweet
+     * Generates a short wisdom tweet.
+     */
+    public function wisdomTweet() {
+        header('Content-Type: application/json');
+
+        $apiKey= 'AIzaSyBdwcFGWMGMo2xsOI5v_xH3ytudL95nrzY'; // --- IGNORE ---
+        if (!$apiKey) {
+            http_response_code(500);
+            echo json_encode([
+                'respuesta' => 'El Gurú medita en el silencio cósmico... (Configura la GEMINI_API_KEY para obtener una respuesta real).',
+                'prompt' => "Eres 'El Gurú de Bits', un oráculo digital. Genera un tweet de sabiduría que mezcle lo esotérico y lo tecnológico."
+            ]);
+            return;
+        }
+
+                if (isset($_GET['hashtag']) && !empty(trim($_GET['hashtag']))) {
+            $seedHashtag = trim($_GET['hashtag']);
+        } else {
+            $hashtags = ['#SabiduriaDigital', '#OraculoBinario', '#BytesDeVerdad', '#ConexionCosmica', '#FuturoEnCodigo', '#MetaforasTech'];
+            $seedHashtag = $hashtags[array_rand($hashtags)];
+        }
+
+        $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" . $apiKey;
+
+        $prompt = "Eres 'El Gurú de Bits', un oráculo digital con el arquetipo del Observador Social Sagaz y un humor ácido al estilo mexicano. 
+                   Genera un 'mini oráculo' o 'tweet de sabiduría': una frase corta, ingeniosa y memorable que combine lo esotérico con lo 
+                   tecnológico. Debe ser perfecta para un tweet, con un toque de humor y una verdad punzante sobre la vida moderna. 
+                   No te presentes, solo lanza la perla de sabiduría basado en el (o los) hashtag semilla ({$seedHashtag}). Termina con el hashtag semilla: {$seedHashtag}";
+
+        $payload = [
+            'contents' => [
+                [
+                    'parts' => [
+                        ['text' => $prompt]
+                    ]
+                ]
+            ]
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpcode != 200) {
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Error al contactar al oráculo cósmico.',
+                'details' => json_decode($response),
+                'prompt' => $prompt
+            ]);
+            return;
+        }
+
+        $result = json_decode($response, true);
+        $respuestaGuru = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'El cosmos digital guarda silencio por ahora...';
+
+        echo json_encode([
+            'respuesta' => $respuestaGuru,
+            'prompt' => $prompt
+        ]);
+    }
+
+    /**
+     * Endpoint /api/guru/fan-response
+     * Generates a short response for a fan.
+     */
+    public function fanResponse() {
+        header('Content-Type: application/json');
+
+        $json_data = file_get_contents('php://input');
+        $data = json_decode($json_data, true);
+
+        if (!isset($data['fanName']) || !isset($data['fanMessage'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Faltan los parámetros "fanName" y "fanMessage"']);
+            return;
+        }
+
+        $fanName = $data['fanName'];
+        $fanMessage = $data['fanMessage'];
+
+        $apiKey= 'AIzaSyBdwcFGWMGMo2xsOI5v_xH3ytudL95nrzY'; // --- IGNORE ---
+        if (!$apiKey) {
+            http_response_code(500);
+            echo json_encode([
+                'respuesta' => 'El Gurú está ocupado decodificando el universo en este momento.',
+                'prompt' => 'API Key no configurada.'
+            ]);
+            return;
+        }
+
+        $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" . $apiKey;
+
+        $prompt = "Eres 'El Gurú de Bits', un oráculo digital con un humor ácido y sabiduría tecnológica. 
+Un fan llamado '{$fanName}' te ha enviado este mensaje: '{$fanMessage}'.
+
+Genera una respuesta corta (máximo 230 caracteres), ingeniosa y con tu estilo característico que mezcla lo esotérico y lo tecnológico. La respuesta debe ser amable, pero mantener tu tono de gurú sabelotodo y enigmático. Debe ser adecuada para una red social.";
+
+        $payload = [
+            'contents' => [
+                [
+                    'parts' => [
+                        ['text' => $prompt]
+                    ]
+                ]
+            ]
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpcode != 200) {
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Error al canalizar la respuesta cósmica.',
+                'details' => json_decode($response),
+                'prompt' => $prompt
+            ]);
+            return;
+        }
+
+        $result = json_decode($response, true);
+        $respuestaGuru = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'El éter digital no tiene una respuesta clara en este momento...';
+
+        echo json_encode([
+            'respuesta' => $respuestaGuru,
+            'prompt' => $prompt
+        ]);
+    }
 }
        

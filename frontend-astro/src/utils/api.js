@@ -69,3 +69,47 @@ export async function getReading(pregunta, cartas) {
         };
     }
 }
+
+export async function getWisdomTweet(hashtag = '') {
+    try {
+        const url = new URL(`${API_BASE_URL}/guru/wisdom-tweet`);
+        if (hashtag) {
+            url.searchParams.append('hashtag', hashtag);
+        }
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error al obtener el tweet de sabiduría:", error);
+        return { 
+            error: "El Gurú no encuentra inspiración en este momento.",
+            prompt: "No se pudo generar un prompt debido a un error de conexión."
+        };
+    }
+}
+
+export async function getFanResponse(fanName, fanMessage) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/guru/fan-response`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ fanName, fanMessage }),
+        });
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error al generar la respuesta para el fan:", error);
+        return { 
+            error: "El Gurú está meditando y no puede responder ahora.",
+            prompt: "No se pudo generar un prompt debido a un error de conexión."
+        };
+    }
+}

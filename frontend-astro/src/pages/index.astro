@@ -6,8 +6,11 @@ import Layout from '../layouts/Layout.astro';
 	<main class="container">
 		<h1>El Gurú de Bits</h1>
 		<p class="tagline">Un oráculo digital para la era de la información.</p>
-		<a href="/oraculo" class="cta-button">Tirada de Tarot</a>
-		<a href="/hoy" class="cta-button">¿Cómo me irá hoy?</a>
+		<div class="button-container">
+			<a href="/oraculo" class="cta-button">Tirada de Tarot</a>
+			<a href="/hoy" class="cta-button">¿Cómo me irá hoy?</a>
+			<a href="/mini-oraculo" class="cta-button">Mini Oráculo</a>
+		</div>
         <a href="/sobre" class="secondary-link">¿Qué es esto?</a>
 	</main>
 </Layout>
@@ -31,6 +34,11 @@ import Layout from '../layouts/Layout.astro';
         color: #a7a7a7;
         margin-bottom: 2rem;
         font-style: italic;
+    }
+    .button-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
     }
     .cta-button {
         background-color: #9333ea; /* Morado */
